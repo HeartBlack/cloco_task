@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import  Optional
+from typing import Optional
 from fastapi import File, Form, UploadFile, status
 from fastapi.responses import FileResponse
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -21,11 +21,11 @@ def get_all_songs(
     query = db.query(Songs).all()
     params = Params(page=page, page_size=page_size)
     songs = paginate(query, params=params)
-    
+
     for song in songs.items:
         if song.audio_file:
             song.audio_file = f"/audio/{song.title}/{song.audio_file}"
-    
+
     return songs
 
 
@@ -35,22 +35,28 @@ def create_songs(
     song_name: str | None = Form(None),
     song_description: str | None = Form(None),
     song_url: str | None = Form(None),
-    audio_file: UploadFile= File(...),
+    album: int = Form(),
+    audio_file: UploadFile = File(...),
     db: Session = Depends(get_db),
-    # current_user=Depends(check_user_type([Role.ARTIST, Role.ADMIN])),
+    current_user=Depends(check_user_type([Role.ARTIST, Role.ADMIN])),
 ):
-    songs = Songs(
-        title=title,
-        song_name=song_name,
-        song_description=song_description,
-        song_url=song_url
-    )
-    file_path = songs.saving_artist_mp3(audio_file)
-    songs.audio_file = file_path
+    album = db.query(Album).filter_by(id=album).first()
 
-    db.add(songs)
-    db.commit()
-    return songs
+    if album and album.artist == current_user.id:
+        songs = Songs(
+            title=title,
+            song_name=song_name,
+            song_description=song_description,
+            song_url=song_url,
+        )
+        file_path = songs.saving_artist_mp3(audio_file, album.title)
+        songs.audio_file = file_path
+
+        db.add(songs)
+        db.commit()
+        db.refresh(instance=songs)
+        return songs
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Album not found")
 
 
 @router.get("/get_songs_by_id/{id}")
@@ -63,7 +69,7 @@ def get_songs_by_id(id, db: Session = Depends(get_db)):
 
 @router.put("/update_song/{id}")
 def update_song(
-    id:int,
+    id: int,
     title: Optional[str] = Form(None),
     description: Optional[str] = Form(None),
     first_release_year: Optional[datetime] = Form(None),
@@ -102,15 +108,11 @@ def delete_song(
         db.commit()
         return {"data": "Album is deleted"}
     else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Album not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Album not found")
 
-@router.get('/audio/')
-async def serve_audio_file(
-    title: str = Query(...),
-    db: Session = Depends(get_db)
-):
+
+@router.get("/audio/")
+async def serve_audio_file(title: str = Query(...), db: Session = Depends(get_db)):
     song = db.query(Songs).filter(Songs.title.ilike(f"%{title}%")).first()
     # print(song.title,song.audio_file)
     if song:

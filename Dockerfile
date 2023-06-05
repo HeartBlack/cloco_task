@@ -13,7 +13,7 @@ RUN apt-get update && cat apt_requirements.txt | xargs apt -y --no-install-recom
     && apt-get install -y libpq-dev \
     && rm -rf /var/lib/apt/lists/* \
     && apt autoremove \
-    && apt autoclean 
+    && apt autoclean
 
 # Install Python dependencies
 RUN pip install --upgrade pip
