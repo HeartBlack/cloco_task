@@ -11,6 +11,7 @@ from fastapi_pagination import Params, paginate
 
 router = APIRouter()
 
+
 @router.get("/get_album/")
 def get_all_album(
     current_user: User = Depends(get_current_user),
@@ -103,6 +104,4 @@ def delete_album_by_id(
         db.commit()
         return {"data": "Album is deleted"}
     else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Album not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Album not found")

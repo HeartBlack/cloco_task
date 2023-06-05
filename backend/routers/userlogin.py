@@ -46,7 +46,7 @@ def register_user(
         username=user_form.username,
         email=user_form.email,
         password=hashed_password,
-        user_type=None,
+        user_type=Role.NORMAL,
     )
     db.add(user)
     db.commit()
@@ -55,9 +55,7 @@ def register_user(
 
 
 @router.post("/login/")
-def login(
-    username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)
-):
+def login(username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     user = authenticate_user(username, password, db)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid username or password")
@@ -69,5 +67,3 @@ def login(
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
-
-
