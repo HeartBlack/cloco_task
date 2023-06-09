@@ -19,6 +19,16 @@ services:
       - postgres-data:/var/lib/postgresql/data
     environment:
       - .env
-
+  # react:
+  #   build:
+  #     # context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./frontend:/usr/src/app
+  #   command: npm start
+  #   stdin_open: true
+  #   tty: true
 volumes:
   postgres-data:
