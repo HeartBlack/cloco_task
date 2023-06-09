@@ -1,6 +1,6 @@
 import { Outlet, Navigate } from 'react-router-dom'
 export const setToken = (token) => {
-    localStorage.setItem('accecss_token', token)// make up your own token
+    localStorage.setItem('accecss_token', token)
 }
 
 export const fetchToken = (token) => {
@@ -15,9 +15,6 @@ export const fetchToken = (token) => {
 function PrivateRoutes() {
 
     let auth = fetchToken()
-    // console.log(auth)
-    // let auth = {'token':true}
-    console.log(auth)
 
     return (
         auth.token ? <Outlet /> : <Navigate to="/login" />
