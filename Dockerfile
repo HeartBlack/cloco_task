@@ -25,7 +25,7 @@ COPY . /usr/src/app/
 
 # Set entrypoint script permissions
 RUN chmod +x /usr/src/app/entrypoint.sh
-RUN chmod -R 777 /usr/src/app
+# RUN chmod -R 777 /usr/src/app
 
 
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
