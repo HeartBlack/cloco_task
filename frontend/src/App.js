@@ -6,6 +6,7 @@ import Login from './pages/login';
 import NotFound from './pages/404';
 import Home from './pages/home';
 import Signup from './pages/signup';
+import CreateNewSong from './components/creat_song';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Routes>
             <Route element={<PrivateRoutes />}>
                 <Route element={<Dashboard/>} path="/dashboard" />
+                <Route element={<CreateNewSong/>} path="/create/new/song" />
             </Route>
             <Route element={<Login/>} path="/login"/>
             <Route element={<Signup/>} path="/signup"/>
