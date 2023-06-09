@@ -1,9 +1,26 @@
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import PrivateRoutes from './utils/privateroute'
+import Dashboard from './pages/dashboard';
+import Login from './pages/login';
+import NotFound from './pages/404';
+import Home from './pages/home';
+import Signup from './pages/signup';
 
 function App() {
   return (
     <div className="App">
-     <h1>Hello Nepal</h1>
+      <Router>
+          <Routes>
+            <Route element={<PrivateRoutes />}>
+                <Route element={<Dashboard/>} path="/dashboard" />
+            </Route>
+            <Route element={<Login/>} path="/login"/>
+            <Route element={<Signup/>} path="/signup"/>
+            <Route element={<Home/>} path="/" exact/>
+            <Route path='*' element={<NotFound/>}/>
+          </Routes>
+      </Router>
     </div>
   );
 }
