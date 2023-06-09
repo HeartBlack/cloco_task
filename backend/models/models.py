@@ -1,12 +1,10 @@
 import os
 import sqlalchemy as db
 from config import Config
-
-# from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.orm import relationship
 from enum import Enum
 from datetime import datetime
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import HTTPException, UploadFile
 
 Base = Config.Base
 

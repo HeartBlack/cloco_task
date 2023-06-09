@@ -61,7 +61,7 @@ def create_songs(
 
 @router.get("/get_songs_by_id/{id}")
 def get_songs_by_id(id, db: Session = Depends(get_db)):
-    query = db.query(Album).filter_by(id=id).first()
+    query = db.query(Songs).filter_by(id=id).first()
     if query:
         return query
     return {"data": "Album is not found"}
@@ -77,7 +77,7 @@ def update_song(
     db: Session = Depends(get_db),
     current_user=Depends(check_user_type([Role.ARTIST, Role.ADMIN])),
 ):
-    query = db.query(Album).filter_by(id=id).first()
+    query = db.query(Songs).filter_by(id=id).first()
 
     if query:
         if title is not None:
@@ -102,11 +102,11 @@ def delete_song(
     db: Session = Depends(get_db),
     dependencies=Depends(check_user_type([Role.ARTIST, Role.ADMIN])),
 ):
-    query = db.query(Album).filter_by(id=id).first()
+    query = db.query(Songs).filter_by(id=id).first()
     if query:
         db.delete(query)
         db.commit()
-        return {"data": "Album is deleted"}
+        return {"data": "Song is deleted"}
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Album not found")
 
@@ -114,11 +114,9 @@ def delete_song(
 @router.get("/audio/")
 async def serve_audio_file(title: str = Query(...), db: Session = Depends(get_db)):
     song = db.query(Songs).filter(Songs.title.ilike(f"%{title}%")).first()
-    # print(song.title,song.audio_file)
     if song:
         # pass
         file_path = f"audio/{song.audio_file}"
         print(file_path)
-        # return FileResponse(file_path, media_type="audio/mpeg")
     else:
         return {"message": "Song not found"}
