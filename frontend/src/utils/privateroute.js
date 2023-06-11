@@ -5,6 +5,7 @@ export const setToken = (token) => {
 
 export const fetchToken = (token) => {
     var auth_data = localStorage.getItem('accecss_token')
+    console.log(auth_data)
     if (auth_data != null) {
         return {'token':true}
     }
@@ -14,10 +15,10 @@ export const fetchToken = (token) => {
 }
 function PrivateRoutes() {
 
-    let auth = fetchToken()
+    let auth = fetchToken().token
 
     return (
-        auth.token ? <Outlet /> : <Navigate to="/login" />
+        auth ? <Outlet /> : <Navigate to="/login" />
     )
 }
 export default PrivateRoutes
