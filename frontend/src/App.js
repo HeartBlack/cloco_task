@@ -6,9 +6,10 @@ import Login from './pages/login';
 import NotFound from './pages/404';
 import Home from './pages/home';
 import Signup from './pages/signup';
-import CreateNewSong from './components/creat_song';
+import CreateNewSong from './components/create_song';
 
 function App() {
+
   return (
     <div className="App">
       <Router>
@@ -16,6 +17,7 @@ function App() {
             <Route element={<PrivateRoutes />}>
                 <Route element={<Dashboard/>} path="/dashboard" />
                 <Route element={<CreateNewSong/>} path="/create/new/song" />
+
             </Route>
             <Route element={<Login/>} path="/login"/>
             <Route element={<Signup/>} path="/signup"/>
