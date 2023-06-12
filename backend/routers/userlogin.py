@@ -67,3 +67,10 @@ def login(username: str = Form(...), password: str = Form(...), db: Session = De
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.post("/verify_user")
+def verified_user(token: str = Form(...), db: Session = Depends(get_db)):
+    data = get_current_user(token=token, db=db)
+    if data:
+        return True

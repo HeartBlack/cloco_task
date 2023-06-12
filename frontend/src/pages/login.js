@@ -1,16 +1,14 @@
 import { setToken, fetchToken } from "../utils/privateroute";
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
+import axios from "axios"
 
 export default function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const notify = () => toast(errorMessage);
-
 
 
   useEffect(() => {
@@ -18,26 +16,34 @@ export default function Login() {
     if (auth) {
       navigate("/dashboard");
     }
+
   })
+
+
   const submitLogin = async () => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: JSON.stringify(
-        `grant_type=&username=${username}&password=${password}&scope=&client_id=&client_secret=`
-      ),
-    };
 
-    const response = await fetch("http://localhost:8000/api/v1/login", requestOptions);
-    const data = await response.json();
-    console.log(response.ok)
-    if (!response.ok) {
-      setErrorMessage(data.detail);
-    } else {
-      setToken(data.access_token);
-    }
+    await axios.post('http://localhost:8000/api/v1/login', {
+      username: username,
+      password: password,
+    }, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }).then(function (response) {
+      if (!response.statusText === "ok") {
+
+      }
+      else {
+        setToken(response.data.access_token)
+      }
+    }).catch(function (error) {
+
+      var message = error.response.data.detail;
+      const notify = () => toast(message);
+      notify()
+    })
+
   };
-
 
 
 
@@ -46,12 +52,23 @@ export default function Login() {
       return;
     } else {
       submitLogin()
-      // navigate("/dashboard");
     }
   };
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <div style={{ minHeight: 800, marginTop: 30 }}>
         <h1>login page</h1>
         <div style={{ marginTop: 30 }}>
