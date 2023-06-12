@@ -1,25 +1,35 @@
 import { setToken, fetchToken } from "../utils/privateroute";
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from 'react-toastify';
 
 import axios from "axios"
 
 export default function Login() {
-  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [auth, setAuth] = useState(null);
 
 
   useEffect(() => {
-    const auth = fetchToken().token;
-    if (auth) {
-      navigate("/dashboard");
-    }
+    const fetchAuth = async () => {
+      const tokenData = await fetchToken();
+      setAuth(tokenData.token);
+    };
 
-  })
+    fetchAuth();
 
 
+
+  }, []);
+
+  if (auth === null) {
+    return null; // or render a loading sta te if desired
+
+  }
+  if (auth) {
+    return <Navigate to="/dashboard" />;
+  }
   const submitLogin = async () => {
 
     await axios.post('http://localhost:8000/api/v1/login', {

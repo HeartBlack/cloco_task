@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Outlet, Navigate } from 'react-router-dom';
-
+import { useState, useEffect } from 'react';
 export const setToken = (token) => {
     localStorage.setItem('access_token', token);
 };
@@ -36,11 +36,23 @@ export const fetchToken = async () => {
     }
 };
 
-async function PrivateRoutes() {
-    const tokenData = await fetchToken();
-    console.log("tokenData", tokenData)
-    let auth = tokenData.token;
-    console.log("auth", auth);
+function PrivateRoutes() {
+    const [auth, setAuth] = useState(null);
+
+    useEffect(() => {
+        const fetchAuth = async () => {
+            const tokenData = await fetchToken();
+            setAuth(tokenData.token);
+        };
+
+        fetchAuth();
+    }, []);
+
+    console.log(auth);
+
+    if (auth === null) {
+        return null; // or render a loading state if desired
+    }
 
     return auth ? <Outlet /> : <Navigate to="/login" />;
 }
