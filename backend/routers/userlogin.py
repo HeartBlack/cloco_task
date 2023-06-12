@@ -58,7 +58,7 @@ def register_user(
 def login(username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     user = authenticate_user(username, password, db)
     if not user:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+        raise HTTPException(status_code=400, detail="Invalid username or password")
 
     access_token_expires = timedelta(minutes=Config.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
