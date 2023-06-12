@@ -7,6 +7,7 @@ import NotFound from './pages/404';
 import Home from './pages/home';
 import Signup from './pages/signup';
 import CreateNewSong from './components/create_song';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 

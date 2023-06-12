@@ -1,30 +1,52 @@
-import { setToken,fetchToken } from "../utils/privateroute";
+import { setToken, fetchToken } from "../utils/privateroute";
 import { useNavigate } from 'react-router-dom';
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
+import { toast } from 'react-toastify';
+
+
 export default function Login() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const notify = () => toast(errorMessage);
 
-useEffect(()=>{
- const auth = fetchToken().token;
-   if (auth) {
-    navigate("/dashboard");
-  }
-},[])
+
+
+  useEffect(() => {
+    const auth = fetchToken().token;
+    if (auth) {
+      navigate("/dashboard");
+    }
+  })
+  const submitLogin = async () => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: JSON.stringify(
+        `grant_type=&username=${username}&password=${password}&scope=&client_id=&client_secret=`
+      ),
+    };
+
+    const response = await fetch("http://localhost:8000/api/v1/login", requestOptions);
+    const data = await response.json();
+    console.log(response.ok)
+    if (!response.ok) {
+      setErrorMessage(data.detail);
+    } else {
+      setToken(data.access_token);
+    }
+  };
+
+
 
 
   const login = () => {
     if (username === "" || password === "") {
       return;
     } else {
-
-
-
-      // user logic for get access token
-      setToken("123");
-
-      navigate("/dashboard");
+      submitLogin()
+      // navigate("/dashboard");
     }
   };
 
